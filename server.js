@@ -1,9 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import { readdirSync } from 'fs';
 
 const morgan = require('morgan');
 require('dotenv').config();
+
+//Routes Files
+
 const app = express();
 // import { connectDb } from './db';
 
@@ -25,13 +29,16 @@ connectDb();
 app.use(express.json());
 app.use(
   cors({
-    origin: ['http://localhost:5000'],
+    origin: ['http://localhost:3000'],
   })
 );
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
+
+//Routes Middlewares
+readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 
 //Server Setup
 app.listen(process.env.PORT, () =>
